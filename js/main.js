@@ -74,7 +74,8 @@
     startTime = Date.now();
 
     canvas.setImgData(filters.grayscale());
-    canvas.setImgData(filters.gaussianBlur(100, 5));
+    //canvas.setImgData(filters.gaussianBlur(100, 5));
+    canvas.GaussianBlur (srcImageData, strength)  
 
     canvas.setImgData(canny.gradient('sobel'));
     canvas.setImgData(canny.nonMaximumSuppress());
