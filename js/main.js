@@ -2,7 +2,8 @@
   var image;
   var contourFinder;
   var startTime = 0;
-  var maxResolution = 400;
+  var maxResolution = 1024;
+  var maxMultiple = 3;
 
   var resultWidth;
   var resultHeight;
@@ -26,24 +27,18 @@
   };
 
   image = document.getElementById('image');
+  canvas = document.getElementById('canvas');
 
   var dropAreaElement = document.querySelector('.main');
   var imageProvider = new ImageProvider({
     element: dropAreaElement,
     onImageRead: function (image) {
       dropAreaElement.classList.add('dropped');
-      imageWidth = image.width;
-      if (image.width > image.height) {
-        resultWidth = Math.min(image.width, maxResolution);
-        resultHeight = parseInt(resultWidth * image.height / image.width, 10);
-      } else {
-        resultHeight = Math.min(image.height, maxResolution);
-        resultWidth = parseInt(resultHeight * image.width / image.height, 10);
-      }
+      resultWidth = parseInt(image.width / maxMultiple, 10);
+      resultHeight = parseInt(image.height / maxMultiple, 10);
       contourFinder = new ContourFinder();
       canvas = new Canvas('canvas', resultWidth, resultHeight);
       canny = new Canny(canvas);
-      filters = new Filters(canvas);
 
       image.style.opacity = 0;
 
@@ -60,9 +55,9 @@
         }
       }
 
-      document.querySelector('.container')
-        .appendChild(image);
+      document.querySelector('.container').appendChild(image);
 
+      document.querySelector('.container').appendChild(canvas.elem);
       canvas.loadImg(image.src, 0, 0, resultWidth, resultHeight).then(process);
     }
   });
@@ -73,10 +68,34 @@
   function process() {
     startTime = Date.now();
 
-    canvas.setImgData(filters.grayscale());
-    //canvas.setImgData(filters.gaussianBlur(100, 5));
-    canvas.GaussianBlur (srcImageData, strength)  
 
+    canvas.setImgData(ImageFilters.Oil(canvas.getCurrImgData(), 3, 50));
+    canvas.setImgData(ImageFilters.Gamma(canvas.getCurrImgData(), 2));
+    canvas.setImgData(ImageFilters.Edge(canvas.getCurrImgData()));
+    canvas.setImgData(ImageFilters.GrayScale(canvas.getCurrImgData()));
+    canvas.setImgData(ImageFilters.Desaturate(canvas.getCurrImgData()));
+    canvas.setImgData(ImageFilters.Desaturate(canvas.getCurrImgData()));
+    canvas.setImgData(ImageFilters.Solarize(canvas.getCurrImgData()));
+    canvas.setImgData(ImageFilters.GaussianBlur(canvas.getCurrImgData(), 1));
+
+    //伽马
+    //canvas.setImgData(ImageFilters.Gamma(canvas.getCurrImgData(), 2));
+    //边缘
+    //canvas.setImgData(ImageFilters.Edge(canvas.getCurrImgData()));
+    //油画
+    //canvas.setImgData(ImageFilters.Oil(canvas.getCurrImgData(), 2, 50));
+    //高斯模糊
+    //canvas.setImgData(ImageFilters.GaussianBlur(canvas.getCurrImgData(), 1));
+    //灰度
+    //canvas.setImgData(ImageFilters.GrayScale(canvas.getCurrImgData()));
+    //饱和度
+    //canvas.setImgData(ImageFilters.Desaturate(canvas.getCurrImgData()));
+    prevData = canvas.getCurrImgData();
+
+
+    console.log('contourFinder.allContours.length): ' + contourFinder.allContours.length);
+    var secs = (Date.now() - startTime) / 1000;
+    console.log('Finding contours took ' + secs + 's');
     canvas.setImgData(canny.gradient('sobel'));
     canvas.setImgData(canny.nonMaximumSuppress());
     canvas.setImgData(canny.hysteresis());
@@ -84,11 +103,8 @@
     contourFinder.init(canvas.getCanvas());
     contourFinder.findContours();
 
-    console.log('contourFinder.allContours.length): ' + contourFinder.allContours.length);
-    var secs = (Date.now() - startTime) / 1000;
-    console.log('Finding contours took ' + secs + 's');
-
     drawContours();
+    canvas.setImgData(prevData);
   }
 
   function findOutDirection(point1, point2) {
@@ -121,7 +137,7 @@
 
   function drawContours() {
     for (var i = 0; i < contourFinder.allContours.length; i++) {
-      console.log('contour #' + i + ' length: ' + contourFinder.allContours[i].length);
+      //console.log('contour #' + i + ' length: ' + contourFinder.allContours[i].length);
       drawContour(i);
     }
     //animate();
@@ -138,6 +154,12 @@
       direction = null;
 
     points.reduce(function (accumulator, currentValue, currentIndex, array) {
+      //单线条小于10个点
+      //console.log('array.length:' + array.length);
+      if (array.length < 15) {
+        return;
+      }
+      // 
       if (optimizedPoints.length === 0) {
         optimizedPoints.push(currentValue);
         return null;
@@ -190,7 +212,7 @@
     });
 
     setTimeout(function () {
-      document.querySelector('.container img').style.opacity = 0.1;
+      document.querySelector('.container img').style.opacity = 0.4;
       document.querySelector('.container svg').style.opacity = 0;
     }, 2500);
   }

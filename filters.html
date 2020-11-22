@@ -70,7 +70,7 @@
         <input type="button" name="submit" id="form_submit" value="Submit" />
       </div>
       <div id="wrapper">
-        <div id="side">
+        <div id="side" style="position: absolute;">
           <div id="config">
             <h3>Filters</h3>
             <select id="filter_list" size="2">
@@ -114,16 +114,6 @@
             </select>
           </div>
           <!--/config-->
-          <div id="support">
-            <h3>Tested Browsers</h3>
-            <ul>
-              <li>Chrome 10+</li>
-              <li>IE 9</li>
-              <li>Firefox 3.5.4+</li>
-              <li>Opera 10.50+</li>
-            </ul>
-          </div>
-          <!--/support-->
         </div>
         <!--/side-->
         <div id="main">
@@ -821,7 +811,6 @@
                 }
                 self.apply(self);
               });
-
             gui
               .add(self, "keep_ratio")
               .name("Keep Ratio")
@@ -1041,7 +1030,7 @@
         }, 20);
 
         // load default image
-        loadImage("rotator_s.jpg", function () {
+        loadImage("test/20201113_1.jpg", function () {
           initFilter(current_filter);
         });
       });
