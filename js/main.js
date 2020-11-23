@@ -71,7 +71,6 @@
 
     canvas.setImgData(ImageFilters.Oil(canvas.getCurrImgData(), 3, 50));
     canvas.setImgData(ImageFilters.Gamma(canvas.getCurrImgData(), 2));
-    canvas.setImgData(ImageFilters.Edge(canvas.getCurrImgData()));
     canvas.setImgData(ImageFilters.GrayScale(canvas.getCurrImgData()));
     canvas.setImgData(ImageFilters.Desaturate(canvas.getCurrImgData()));
     canvas.setImgData(ImageFilters.Desaturate(canvas.getCurrImgData()));
