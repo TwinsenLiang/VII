@@ -68,14 +68,20 @@
   function process() {
     startTime = Date.now();
 
-
+   //敦煌的效果（较大面积色块）
     canvas.setImgData(ImageFilters.Oil(canvas.getCurrImgData(), 3, 50));
     canvas.setImgData(ImageFilters.Gamma(canvas.getCurrImgData(), 2));
     canvas.setImgData(ImageFilters.GrayScale(canvas.getCurrImgData()));
     canvas.setImgData(ImageFilters.Desaturate(canvas.getCurrImgData()));
-    canvas.setImgData(ImageFilters.Desaturate(canvas.getCurrImgData()));
     canvas.setImgData(ImageFilters.Solarize(canvas.getCurrImgData()));
     canvas.setImgData(ImageFilters.GaussianBlur(canvas.getCurrImgData(), 1));
+    /*
+    //其他尝试
+    canvas.setImgData(ImageFilters.GrayScale(canvas.getCurrImgData()));
+    canvas.setImgData(ImageFilters.GaussianBlur(canvas.getCurrImgData(), 5));
+    canvas.setImgData(ImageFilters.Oil(canvas.getCurrImgData(), 6, 50));
+    */
+
 
     //伽马
     //canvas.setImgData(ImageFilters.Gamma(canvas.getCurrImgData(), 2));
@@ -213,6 +219,6 @@
     setTimeout(function () {
       document.querySelector('.container img').style.opacity = 0.4;
       document.querySelector('.container svg').style.opacity = 0;
-    }, 2500);
+    }, 1500);
   }
 })();
